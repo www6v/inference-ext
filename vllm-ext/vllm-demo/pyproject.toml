@@ -1,0 +1,42 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "vllm-benchmark"
+version = "0.1.0"
+description = "GPU performance benchmark for vLLM inference engine - Qwen3.8-27B quantized"
+authors = [{name = "Wang Wei"}]
+requires-python = ">=3.13"
+dependencies = [
+    "vllm>=0.6.0",
+    "transformers>=4.40.0",
+    "torch>=2.0.0",
+    "accelerate>=0.25.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0.0",
+    "pytest-asyncio>=0.21.0",
+    "black>=23.0.0",
+    "ruff>=0.1.0",
+]
+
+[project.scripts]
+vllm-benchmark = "vllm_benchmark.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.black]
+line-length = 100
+target-version = ["py310"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
