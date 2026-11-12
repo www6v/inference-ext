@@ -1,0 +1,62 @@
+# Strata systemd 服务单元
+# 基于 Strata v0.2.13 (引擎 v0.1.59)
+# 官方文档: https://github.com/Niko1221/Strata
+#
+# 安装步骤:
+#   1. 根据需要修改下面的配置 (模型、路径)
+#   2. sudo cp strata.service /etc/systemd/system/
+#   3. sudo systemctl daemon-reload
+#   4. sudo systemctl enable --now strata
+#
+# 注意: 需要先用 strata launch 下载好模型文件
+
+[Unit]
+Description=Strata Model Server v0.2.13
+Documentation=https://github.com/Niko1221/Strata
+After=network.target
+
+[Service]
+Type=simple
+User=wangwei
+Group=wangwei
+
+# 环境配置
+Environment=STRATA_HOME=/data/.strata
+Environment=PATH=/home/wangwei/.local/bin:/usr/local/bin:/usr/bin:/bin
+
+# 工作目录
+WorkingDirectory=/data/strata
+
+# 启动命令
+# 模型选项:
+#   --family coder --model IQ1_M        (编程专用，推荐)
+#   --family qwen --model q2_0          (通用模型)
+#   --family qwen --model iq2_xs        (更高质量)
+#   --family qwen36 --model UD-Q4_K_XL  (MoE 轻量)
+#   --family deepseek41 --model ist-das-2.00bpw (DeepSeek)
+ExecStart=/home/wangwei/.local/bin/strata launch \
+    --family coder \
+    --model IQ1_M \
+    --data-dir /data/strata-models \
+    --yes \
+    --no-tui
+
+# 重启策略
+Restart=on-failure
+RestartSec=10
+
+# 资源限制
+LimitNOFILE=65536
+
+# 日志
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=strata
+
+# 优雅停止
+KillMode=mixed
+KillSignal=SIGTERM
+TimeoutStopSec=30
+
+[Install]
+WantedBy=multi-user.target
