@@ -27,7 +27,7 @@
 | **驱动** | 595.99.02 (≥580 支持 CUDA 13) ✅ |
 | **CPU** | Intel Xeon E5-2680 v4 @ 2.40GHz |
 | **内存** | 32GB |
-| **磁盘** | `/home` 1.1GB ⚠️ \| `/data` 56GB ✅ |
+| **磁盘** | `/home` 1.1GB ⚠️ \| `/data` 56GB ✅ \| 用户目录: `/data/wangwei` |
 
 ### 支持的硬件
 
@@ -131,7 +131,37 @@ MoE 架构，35B 参数，每 token 激活 3B。
 
 ## 安装部署
 
-### 1. 安装 Strata Terminal
+### 部署步骤概览
+
+```
+1. 环境配置    →  source setup-env.sh
+2. 安装 Strata →  ./install-strata.sh
+3. 查看计划    →  strata launch --plan --family coder --model IQ1_M
+4. 启动模型    →  ./setup.sh (交互式) 或手动命令
+```
+
+### 1. 环境配置
+
+```bash
+cd /home/wangwei/wei/workspacePy/infra-inference/inference-ext/Strata/deploy
+
+# 配置环境变量和目录
+source setup-env.sh
+```
+
+此脚本会:
+- 创建 `/data/.strata` 和 `/data/strata-models` 目录
+- 设置 `STRATA_HOME` 环境变量
+- 添加 strata 到 PATH
+- 写入 `~/.bashrc`
+
+### 2. 安装 Strata Terminal
+
+```bash
+./install-strata.sh
+```
+
+或手动安装:
 
 **Linux / Mac:**
 
@@ -147,36 +177,42 @@ curl -fsSL --connect-timeout 15 --max-time 120 \
 irm -TimeoutSec 120 https://github.com/Niko1221/Strata/releases/latest/download/install.ps1 | iex
 ```
 
-### 2. 配置存储路径
+### 3. 配置存储路径
 
-由于 `/home` 分区空间不足，使用 `/data` 存储模型:
+由于 `/home` 分区空间不足，使用 `/data/wangwei/strata` 存储模型:
 
 ```bash
-# 创建目录
-mkdir -p /data/strata-models /data/.strata
-
-# 设置环境变量
-export STRATA_HOME=/data/.strata
+# 已由 setup-env.sh 配置，或手动设置:
+mkdir -p /data/wangwei/strata/models /data/wangwei/strata/config
+export STRATA_HOME=/data/wangwei/strata/config
 ```
 
-### 3. 预览部署计划
+### 4. 预览部署计划
 
 ```bash
 # 查看计划，不做任何更改
 strata launch --plan --family coder --model IQ1_M
 ```
 
-### 4. 启动模型
+### 5. 启动模型
+
+**交互式部署 (推荐):**
+
+```bash
+./setup.sh
+```
+
+**手动启动:**
 
 ```bash
 # 编程模型 (推荐)
 strata launch --family coder --model IQ1_M \
-  --data-dir /data/strata-models \
+  --data-dir /data/wangwei/strata/models \
   --yes --no-tui
 
 # 或通用模型
 strata launch --family qwen --model q2_0 \
-  --data-dir /data/strata-models \
+  --data-dir /data/wangwei/strata/models \
   --yes --no-tui
 ```
 
@@ -321,12 +357,14 @@ journalctl -u strata -f
 
 ## 文件说明
 
-| 文件 | 说明 |
-|------|------|
-| `README.md` | 本部署方案文档 |
-| `setup.sh` | 一键部署脚本 |
-| `strata.service` | systemd 服务配置 |
-| `QUICK-REFERENCE.md` | 快速参考卡 |
+| 文件 | 说明 | 用法 |
+|------|------|------|
+| `setup-env.sh` | 环境配置脚本 | `source setup-env.sh` |
+| `install-strata.sh` | Strata 安装脚本 | `./install-strata.sh` |
+| `setup.sh` | 交互式部署脚本 (含模型选择) | `./setup.sh` |
+| `strata.service` | systemd 服务配置 | `sudo cp strata.service /etc/systemd/system/` |
+| `README.md` | 本部署方案文档 | - |
+| `QUICK-REFERENCE.md` | 快速参考卡 | - |
 
 ---
 

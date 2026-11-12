@@ -7,10 +7,10 @@
 
 set -e
 
-# 配置
-STRATA_DATA="/data/strata"
-STRATA_MODELS="/data/strata-models"
-STRATA_HOME_DIR="/data/.strata"
+# 配置 - 使用用户可写的 /data/wangwei 目录
+STRATA_BASE="/data/wangwei/strata"
+STRATA_MODELS="$STRATA_BASE/models"
+STRATA_HOME_DIR="$STRATA_BASE/config"
 
 echo "=============================================="
 echo "  Strata v0.2.13 部署脚本"
@@ -20,7 +20,7 @@ echo ""
 
 # 检查磁盘空间
 echo "[1/6] 检查磁盘空间..."
-if [ -d "/data" ]; then
+if [ -d "/data/wangwei" ]; then
     AVAILABLE=$(df -BG /data | tail -1 | awk '{print $4}' | tr -d 'G')
     if [ "$AVAILABLE" -lt 50 ]; then
         echo "警告: /data 分区剩余空间不足 50GB (当前: ${AVAILABLE}GB)"
@@ -32,7 +32,7 @@ if [ -d "/data" ]; then
     fi
     echo "  ✓ /data 分区可用空间: ${AVAILABLE}GB"
 else
-    echo "  ✗ /data 目录不存在，请手动创建或修改脚本"
+    echo "  ✗ /data/wangwei 目录不存在，请手动创建或修改脚本"
     exit 1
 fi
 echo ""

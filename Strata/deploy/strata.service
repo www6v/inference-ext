@@ -21,11 +21,11 @@ User=wangwei
 Group=wangwei
 
 # 环境配置
-Environment=STRATA_HOME=/data/.strata
+Environment=STRATA_HOME=/data/wangwei/strata/config
 Environment=PATH=/home/wangwei/.local/bin:/usr/local/bin:/usr/bin:/bin
 
 # 工作目录
-WorkingDirectory=/data/strata
+WorkingDirectory=/data/wangwei/strata
 
 # 启动命令
 # 模型选项:
@@ -37,7 +37,7 @@ WorkingDirectory=/data/strata
 ExecStart=/home/wangwei/.local/bin/strata launch \
     --family coder \
     --model IQ1_M \
-    --data-dir /data/strata-models \
+    --data-dir /data/wangwei/strata/models \
     --yes \
     --no-tui
 
