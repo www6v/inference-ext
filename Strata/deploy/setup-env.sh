@@ -11,15 +11,15 @@ echo "  Strata 环境配置"
 echo "=============================================="
 echo ""
 
-# 配置路径
+# 配置路径 - 使用 /data1/disk2 存储模型
 STRATA_BIN="$HOME/.local/bin"
-STRATA_BASE="/data/wangwei/strata"
+STRATA_BASE="/data1/disk2/strata"
 export STRATA_HOME="${STRATA_HOME:-$STRATA_BASE/config}"
-STRATA_MODELS="$STRATA_BASE/models"
+export STRATA_MODELS="$STRATA_BASE/models"
 
-# 检查 /data 分区
-if [ ! -d "/data" ]; then
-    echo "错误: /data 目录不存在"
+# 检查目录
+if [ ! -d "/data1/disk2" ]; then
+    echo "错误: /data1/disk2 目录不存在"
     return 1 2>/dev/null || exit 1
 fi
 
@@ -38,11 +38,15 @@ if [[ ":$PATH:" != *":$STRATA_BIN:"* ]]; then
 fi
 
 # 写入 ~/.bashrc (如果不存在)
-if ! grep -q "STRATA_HOME" ~/.bashrc 2>/dev/null; then
+if ! grep -q "STRATA_HOME=/data1" ~/.bashrc 2>/dev/null; then
+    # 移除旧的 strata 配置
+    sed -i '/# Strata 配置/,/export PATH.*strata/d' ~/.bashrc 2>/dev/null
+
     cat >> ~/.bashrc << EOF
 
 # Strata 配置 (自动添加于 $(date +%Y-%m-%d))
 export STRATA_HOME=$STRATA_HOME
+export STRATA_MODELS=$STRATA_MODELS
 export PATH="$STRATA_BIN:\$PATH"
 EOF
     echo "已写入 ~/.bashrc"
@@ -54,14 +58,14 @@ echo ""
 
 # 显示当前配置
 echo "当前配置:"
-echo "  STRATA_HOME: $STRATA_HOME"
-echo "  模型目录:    $STRATA_MODELS"
-echo "  二进制目录:  $STRATA_BIN"
+echo "  STRATA_HOME:  $STRATA_HOME"
+echo "  STRATA_MODELS: $STRATA_MODELS"
+echo "  二进制目录:   $STRATA_BIN"
 echo ""
 
 # 检查磁盘空间
 echo "磁盘空间:"
-df -h /data | tail -1 | awk '{print "  /data: " $4 " 可用 / " $2 " 总计 (" $5 " 已用)"}'
+df -h /data1/disk2 | tail -1 | awk '{print "  /data1/disk2: " $4 " 可用 / " $2 " 总计 (" $5 " 已用)"}'
 echo ""
 
 # 检查 strata 命令
@@ -75,7 +79,9 @@ else
 fi
 
 echo ""
-echo "环境配置完成!"
+echo "=============================================="
+echo "  环境配置完成!"
+echo "=============================================="
 echo ""
 echo "快速开始:"
 echo "  strata launch --plan --family coder --model IQ1_M  # 查看计划"

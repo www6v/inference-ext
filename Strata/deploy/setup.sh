@@ -7,8 +7,8 @@
 
 set -e
 
-# 配置 - 使用用户可写的 /data/wangwei 目录
-STRATA_BASE="/data/wangwei/strata"
+# 配置 - 使用 /data1/disk2 存储模型
+STRATA_BASE="/data1/disk2/strata"
 STRATA_MODELS="$STRATA_BASE/models"
 STRATA_HOME_DIR="$STRATA_BASE/config"
 
@@ -20,19 +20,19 @@ echo ""
 
 # 检查磁盘空间
 echo "[1/6] 检查磁盘空间..."
-if [ -d "/data/wangwei" ]; then
-    AVAILABLE=$(df -BG /data | tail -1 | awk '{print $4}' | tr -d 'G')
-    if [ "$AVAILABLE" -lt 50 ]; then
-        echo "警告: /data 分区剩余空间不足 50GB (当前: ${AVAILABLE}GB)"
+if [ -d "/data1/disk2" ]; then
+    AVAILABLE=$(df -BG /data1/disk2 | tail -1 | awk '{print $4}' | tr -d 'G')
+    if [ "$AVAILABLE" -lt 70 ]; then
+        echo "警告: /data1/disk2 分区剩余空间不足 70GB (当前: ${AVAILABLE}GB)"
         read -p "是否继续? (y/N) " -n 1 -r
         echo
         if [[ ! $REPLY =~ ^[Yy]$ ]]; then
             exit 1
         fi
     fi
-    echo "  ✓ /data 分区可用空间: ${AVAILABLE}GB"
+    echo "  ✓ /data1/disk2 分区可用空间: ${AVAILABLE}GB"
 else
-    echo "  ✗ /data/wangwei 目录不存在，请手动创建或修改脚本"
+    echo "  ✗ /data1/disk2 目录不存在，请手动创建或修改脚本"
     exit 1
 fi
 echo ""
