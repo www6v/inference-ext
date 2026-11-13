@@ -11,7 +11,7 @@
 # 注意: 需要先用 strata launch 下载好模型文件
 
 [Unit]
-Description=Strata Model Server v0.2.13
+Description=Strata Model Server v0.2.13 (Coder IQ1_M)
 Documentation=https://github.com/Niko1221/Strata
 After=network.target
 
@@ -21,25 +21,25 @@ User=wangwei
 Group=wangwei
 
 # 环境配置
-Environment=STRATA_HOME=/data/wangwei/strata/config
-Environment=PATH=/home/wangwei/.local/bin:/usr/local/bin:/usr/bin:/bin
+Environment=STRATA_HOME=/data1/disk2/strata/config
+Environment=PATH=/home/wangwei/.local/bin:/home/wangwei/wei/workspacePy/infra-inference/Strata-main/.venv/bin:/usr/local/bin:/usr/bin:/bin
 
 # 工作目录
-WorkingDirectory=/data/wangwei/strata
+WorkingDirectory=/home/wangwei/wei/workspacePy/infra-inference/Strata-main
 
-# 启动命令
+# 启动命令 - 使用 Python 直接启动 server.py 以支持 --host 参数
 # 模型选项:
 #   --family coder --model IQ1_M        (编程专用，推荐)
 #   --family qwen --model q2_0          (通用模型)
 #   --family qwen --model iq2_xs        (更高质量)
 #   --family qwen36 --model UD-Q4_K_XL  (MoE 轻量)
 #   --family deepseek41 --model ist-das-2.00bpw (DeepSeek)
-ExecStart=/home/wangwei/.local/bin/strata launch \
-    --family coder \
-    --model IQ1_M \
-    --data-dir /data/wangwei/strata/models \
-    --yes \
-    --no-tui
+ExecStart=/home/wangwei/wei/workspacePy/infra-inference/Strata-main/.venv/bin/python \
+    /home/wangwei/wei/workspacePy/infra-inference/Strata-main/serve/server.py \
+    --engine strata \
+    --config /home/wangwei/wei/workspacePy/infra-inference/Strata-main/strata-coder-iq1_m.json \
+    --port 8080 \
+    --host 0.0.0.0
 
 # 重启策略
 Restart=on-failure
