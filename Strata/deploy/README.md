@@ -346,18 +346,21 @@ journalctl -u strata -f
 
 | 项目 | 状态 |
 |------|------|
-| 模型下载 | ✅ 完成 (55GB) |
-| 引擎配置 | ✅ 完成 |
-| 服务启动 | ✅ 运行中 |
-| API 测试 | ✅ 通过 (48.5 tok/s) |
+| 模型下载 | ✅ 完成 (55GB, hf-mirror.com) |
+| 引擎配置 | ✅ 完成 (v0.1.59) |
+| 上下文配置 | ✅ **128K** (131,072 tokens) |
+| 远程访问 | ✅ 0.0.0.0:8080 |
+| API 测试 | ✅ 通过 |
 
 **API 端点:**
-- OpenAI: http://127.0.0.1:8080/v1
-- Anthropic: http://127.0.0.1:8080/v1/messages
+- OpenAI: `http://192.168.3.4:8080/v1`
+- Anthropic: `http://192.168.3.4:8080/v1/messages`
+- Web UI: `http://192.168.3.4:8080/`
 
 **性能指标:**
-- 输出速度: 48.5 tokens/s
-- 提示处理: 93.8 tokens/s
+- 输出速度: **61.6 tokens/s**
+- 提示处理: **96.3 tokens/s**
+- 上下文窗口: **128K tokens**
 
 ---
 
@@ -383,9 +386,53 @@ journalctl -u strata -f
 | `setup-env.sh` | 环境配置脚本 | `source setup-env.sh` |
 | `install-strata.sh` | Strata 安装脚本 | `./install-strata.sh` |
 | `setup.sh` | 交互式部署脚本 (含模型选择) | `./setup.sh` |
+| `download-model.sh` | 模型下载脚本 (hf-mirror) | `./download-model.sh` |
+| `start.sh` | **启动服务脚本** ✨ | `./start.sh` |
+| `stop.sh` | **停止服务脚本** ✨ | `./stop.sh` |
+| `run-coder-iq1_m-remote.sh` | 远程访问启动脚本 | `./run-coder-iq1_m-remote.sh` |
 | `strata.service` | systemd 服务配置 | `sudo cp strata.service /etc/systemd/system/` |
 | `README.md` | 本部署方案文档 | - |
 | `QUICK-REFERENCE.md` | 快速参考卡 | - |
+
+## 常用操作
+
+### 启动/停止服务
+
+```bash
+# 启动
+./start.sh
+
+# 停止
+./stop.sh
+
+# 查看状态
+curl http://192.168.3.4:8080/health
+```
+
+### 日志查看
+
+```bash
+# 实时日志
+tail -f /tmp/strata-server.log
+
+# 启动日志
+cat /tmp/strata-server.log
+```
+
+### 上下文配置
+
+当前配置为 **128K 上下文**，如需修改：
+
+```bash
+# 编辑配置
+vi strata-coder-iq1_m.json
+# 修改 "--max-context" 的值
+
+# 重启服务
+./stop.sh && ./start.sh
+```
+
+可选上下文值：8K, 32K, 64K, **128K** (当前), 200K, 256K, 384K, 512K
 
 ---
 
